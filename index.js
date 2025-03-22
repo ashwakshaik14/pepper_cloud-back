@@ -8,7 +8,7 @@ dotenv.config();
 const app = express();
 const allowedOrigins = [
   "http://localhost:5173",
-  "https://your-deployed-frontend.com", // <-- Replace with your frontend URL
+  "https://pepper-cloud-front.onrender.com", // <-- Replace with your frontend URL
 ];
 
 app.use(cors({
