@@ -6,7 +6,11 @@ const formRoutes = require("./routes/formRoutes");
 
 dotenv.config();
 const app = express();
-const allowedOrigins=["http://localhost:5173"];
+const allowedOrigins = [
+  "http://localhost:5173",
+  "https://your-deployed-frontend.com", // <-- Replace with your frontend URL
+];
+
 app.use(cors({
   origin:(origin,callback)=>{
     if(!origin || allowedOrigins.includes(origin)){
