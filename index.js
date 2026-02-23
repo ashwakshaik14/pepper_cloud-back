@@ -50,3 +50,13 @@ app.use("/api/forms", formRoutes);
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+
+mongoose.connection.on('error', (err) => {
+  console.error("Mongoose connection error:", err);
+  // Try to reconnect after error
+  setTimeout(() => mongoose.connect(process.env.MONGO_URI, mongoOptions), 5000);
+});
+
+mongoose.connection.on('open', () => {
+  console.log("Mongoose connection is open");
+});
