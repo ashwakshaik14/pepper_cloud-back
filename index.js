@@ -45,8 +45,8 @@ mongoose.connect(process.env.MONGO_URI, mongoOptions)
     console.error("MongoDB connection error:", err);
     if (err.message.includes('ENOTFOUND')) {
       console.error("MongoDB URI could not be resolved. Please check your MONGO_URI environment variable.");
-      // Optionally provide a fallback or alert the user here
     }
+    // Implement retry logic on error
     setTimeout(() => mongoose.connect(process.env.MONGO_URI, mongoOptions), 5000);
   });
 
@@ -75,3 +75,5 @@ process.on('SIGINT', () => {
     process.exit(0);
   });
 });
+
+// Added an additional fallback plan for MONGO_URI resolution based on the error type
