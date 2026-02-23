@@ -61,20 +61,12 @@ app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
 
 mongoose.connection.on('error', (err) => {
   console.error("Mongoose connection error:", err);
+  if (err.message.includes('ENOTFOUND')) {
+    console.error("MongoDB URI could not be resolved. Please check your MONGO_URI environment variable.");
+  }
   setTimeout(connectWithRetry, 5000);
 });
 
 mongoose.connection.on('open', () => {
   console.log("Mongoose connection is open");
-});
-
-process.on('unhandledRejection', (err) => {
-  console.error('Unhandled promise rejection:', err);
-});
-
-process.on('SIGINT', () => {
-  mongoose.connection.close(() => {
-    console.log('Mongoose connection disconnected due to application termination');
-    process.exit(0);
-  });
 });
