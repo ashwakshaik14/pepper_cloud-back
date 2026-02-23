@@ -47,6 +47,8 @@ const connectWithRetry = () => {
       console.error("MongoDB connection error:", err);
       if (err.message.includes('ENOTFOUND')) {
         console.error("MongoDB URI could not be resolved. Please check your MONGO_URI environment variable.");
+      } else if (err.message.includes('ECONNREFUSED')) {
+        console.error("Connection refused. Please ensure your MongoDB service is running.");
       }
       setTimeout(connectWithRetry, 5000);
     });
