@@ -38,7 +38,7 @@ app.use(cors({
 
 app.use(express.json());
 
-const mongoOptions = { useNewUrlParser: true, useUnifiedTopology: true, serverSelectionTimeoutMS: 5000 };
+const mongoOptions = { useNewUrlParser: true, useUnifiedTopology: true, serverSelectionTimeoutMS: 5000 }; 
 
 const connectWithRetry = () => {
   mongoose.connect(process.env.MONGO_URI, mongoOptions)
@@ -66,4 +66,10 @@ mongoose.connection.on('error', (err) => {
 
 mongoose.connection.on('open', () => {
   console.log("Mongoose connection is open");
+});
+
+// Added additional logging for the connection status to better diagnose issues
+mongoose.connection.on('disconnected', () => {
+  console.error("Mongoose connection lost. Trying to reconnect...");
+  connectWithRetry();
 });
