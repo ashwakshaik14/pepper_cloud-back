@@ -12,17 +12,17 @@ class SelfHeal {
                     console.error("SelfHeal: native fetch not available.");
                     return;
                 }
-                await fetch(this.serverUrl + "/heal", {
+                await fetch(this.serverUrl + "/report", {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
-                        'Authorization': `Bearer ${this.apiKey}`
+                        'api-key': this.apiKey
                     },
                     body: JSON.stringify({
                         repo: repo,
                         file_path: filePath,
                         error: errorMsg,
-                        stack: stack
+                        trace: stack
                     })
                 });
             } catch (err) {
