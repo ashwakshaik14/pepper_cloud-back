@@ -47,6 +47,7 @@ mongoose.connect(process.env.MONGO_URI, mongoOptions)
       console.error("MongoDB URI could not be resolved. Please check your MONGO_URI environment variable.");
       // Optionally provide a fallback or alert the user here
     }
+    selfheal.handleError(err); // Notify self-healing mechanism about the error
     setTimeout(() => mongoose.connect(process.env.MONGO_URI, mongoOptions), 5000);
   });
 
@@ -57,6 +58,7 @@ app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
 
 mongoose.connection.on('error', (err) => {
   console.error("Mongoose connection error:", err);
+  selfheal.handleError(err); // Notify self-healing mechanism about the error
   // Try to reconnect after error
   setTimeout(() => mongoose.connect(process.env.MONGO_URI, mongoOptions), 5000);
 });
