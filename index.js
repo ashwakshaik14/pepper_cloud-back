@@ -38,18 +38,15 @@ app.use(cors({
 
 app.use(express.json());
 
-const mongoOptions = { useNewUrlParser: true, useUnifiedTopology: true, serverSelectionTimeoutMS: 5000, socketTimeoutMS: 10000, };  
+const mongoOptions = { useNewUrlParser: true, useUnifiedTopology: true, serverSelectionTimeoutMS: 5000, socketTimeoutMS: 10000 };  
 
 const connectWithRetry = () => {
   mongoose.connect(process.env.MONGO_URI, mongoOptions)
     .then(() => console.log("MongoDB connected"))
     .catch((err) => {
       console.error("MongoDB connection error:", err);
-      if (err.message.includes('ENOTFOUND')) {
-        console.error("MongoDB URI could not be resolved. Please check your MONGO_URI environment variable.");
-        // Set a fallback URI if the original fails
-        process.env.MONGO_URI = "mongodb://localhost:27017/default_db";
-        console.log("Using fallback MongoDB URI");
+      if (err.name === 'MongoNetworkError' || err.message.includes('timed out')) {
+        console.error("MongoDB connection timed out, retrying...");
       }
       setTimeout(connectWithRetry, 5000);
     });
@@ -64,7 +61,10 @@ app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
 
 mongoose.connection.on('error', (err) => {
   console.error("Mongoose connection error:", err);
-  setTimeout(connectWithRetry, 5000);
+  if (err.name === 'MongoNetworkError' || err.message.includes('timed out')) {
+    console.error("MongoDB connection error detected, retrying...");
+    setTimeout(connectWithRetry, 5000);
+  }
 });
 
 mongoose.connection.on('open', () => {
