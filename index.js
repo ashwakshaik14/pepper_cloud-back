@@ -19,7 +19,7 @@ selfheal.init(
 const app = express();
 const allowedOrigins = [
   "http://localhost:5173",
-  "https://pepper-cloud-front.onrender.com", // <-- Replace with your frontend URL
+  "https://pepper-cloud-front.onrender.com",
 ];
 
 app.use(cors({
@@ -31,15 +31,14 @@ app.use(cors({
       callback(new Error("Not allowed by CORS"));
     }
   },
-  allowedHeaders: ["Content-Type", "Authorization"], // Added Authorization for API authentication
+  allowedHeaders: ["Content-Type", "Authorization"],
   methods: ["GET", "POST", "PUT", "DELETE"],
-  credentials: true, // Allows sending cookies with requests
+  credentials: true,
 }));
 
 app.use(express.json());
 
-mongoose
-  .connect(process.env.MONGO_URI, { useNewUrlParser: true, useUnifiedTopology: true })
+mongoose.connect(process.env.MONGO_URI, { useNewUrlParser: true, useUnifiedTopology: true, serverSelectionTimeoutMS: 5000 })
   .then(() => console.log("MongoDB connected"))
   .catch((err) => console.log(err));
 
