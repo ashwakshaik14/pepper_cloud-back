@@ -38,17 +38,24 @@ app.use(cors({
 
 app.use(express.json());
 
-const mongoOptions = { useNewUrlParser: true, useUnifiedTopology: true, serverSelectionTimeoutMS: 5000 };
-mongoose.connect(process.env.MONGO_URI, mongoOptions)
-  .then(() => console.log("MongoDB connected"))
-  .catch((err) => {
-    console.error("MongoDB connection error:", err);
-    if (err.message.includes('ENOTFOUND')) {
-      console.error("MongoDB URI could not be resolved. Please check your MONGO_URI environment variable.");
-      // Optionally provide a fallback or alert the user here
-    }
-    setTimeout(() => mongoose.connect(process.env.MONGO_URI, mongoOptions), 5000);
-  });
+const mongoOptions = { useNewUrlParser: true, useUnifiedTopology: true, serverSelectionTimeoutMS: 5000 };  
+
+const connectWithRetry = () => {
+  mongoose.connect(process.env.MONGO_URI, mongoOptions)
+    .then(() => console.log("MongoDB connected"))
+    .catch((err) => {
+      console.error("MongoDB connection error:", err);
+      if (err.message.includes('ENOTFOUND')) {
+        console.error("MongoDB URI could not be resolved. Please check your MONGO_URI environment variable.");
+        // Set a default URI as a fallback
+        process.env.MONGO_URI = "mongodb://localhost:27017/default_db";
+        console.log("Using fallback MongoDB URI");
+      }
+      setTimeout(connectWithRetry, 5000);
+    });
+};
+
+connectWithRetry();
 
 app.use("/api/forms", formRoutes);
 
@@ -57,8 +64,7 @@ app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
 
 mongoose.connection.on('error', (err) => {
   console.error("Mongoose connection error:", err);
-  // Try to reconnect after error
-  setTimeout(() => mongoose.connect(process.env.MONGO_URI, mongoOptions), 5000);
+  setTimeout(connectWithRetry, 5000);
 });
 
 mongoose.connection.on('open', () => {
