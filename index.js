@@ -63,3 +63,14 @@ mongoose.connection.on('error', (err) => {
 mongoose.connection.on('open', () => {
   console.log("Mongoose connection is open");
 });
+
+process.on('unhandledRejection', (err) => {
+  console.error('Unhandled promise rejection:', err);
+});
+
+process.on('SIGINT', () => {
+  mongoose.connection.close(() => {
+    console.log('Mongoose connection disconnected due to application termination');
+    process.exit(0);
+  });
+});
