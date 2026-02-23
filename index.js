@@ -12,7 +12,7 @@ const selfheal = new SelfHeal(
     process.env.API_KEY
 );
 selfheal.init(
-    "https://github.com/ashwakshaik14/pepper_cloud-back", 
+    "https://github.com/ashwakshaik14/pepper_cloud-back",
     "index.js"
 );
 
@@ -43,6 +43,9 @@ mongoose.connect(process.env.MONGO_URI, mongoOptions)
   .then(() => console.log("MongoDB connected"))
   .catch((err) => {
     console.error("MongoDB connection error:", err);
+    if (err.message.includes('ENOTFOUND')) {
+      console.error("MongoDB URI could not be resolved. Please check your MONGO_URI environment variable.");
+    }
     setTimeout(() => mongoose.connect(process.env.MONGO_URI, mongoOptions), 5000);
   });
 
