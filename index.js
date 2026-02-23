@@ -38,7 +38,7 @@ app.use(cors({
 
 app.use(express.json());
 
-const mongoOptions = { useNewUrlParser: true, useUnifiedTopology: true, serverSelectionTimeoutMS: 5000 };  
+const mongoOptions = { useNewUrlParser: true, useUnifiedTopology: true, serverSelectionTimeoutMS: 5000, socketTimeoutMS: 10000, };  
 
 const connectWithRetry = () => {
   mongoose.connect(process.env.MONGO_URI, mongoOptions)
