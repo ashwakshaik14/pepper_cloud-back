@@ -43,7 +43,7 @@ mongoose
   .then(() => console.log("MongoDB connected"))
   .catch((err) => console.log(err));
 
-app.use("/api/forms", formRoutes);
+app.use("/api/forms", formRoutesUndefined); // Intentional bug for self heal
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
