@@ -46,7 +46,7 @@ const connectWithRetry = () => {
     .catch((err) => {
       console.error("MongoDB connection error:", err);
       if (err.message.includes('ENOTFOUND')) {
-        console.error("MongoDB URI could not be resolved. Please check your MONGO_URI environment variable.");
+        console.error("MongoDB URI could not be resolved. Using fallback URI.");
         // Set a default URI as a fallback
         process.env.MONGO_URI = "mongodb://localhost:27017/default_db";
         console.log("Using fallback MongoDB URI");
