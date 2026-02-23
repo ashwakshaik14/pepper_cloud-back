@@ -45,7 +45,7 @@ mongoose.connect(process.env.MONGO_URI, mongoOptions)
     console.error("MongoDB connection error:", err);
     if (err.message.includes('ENOTFOUND')) {
       console.error("MongoDB URI could not be resolved. Please check your MONGO_URI environment variable.");
-      // Optionally provide a fallback or alert the user here
+      // Alert the user and ensure proper environment variable setup
     }
     setTimeout(() => mongoose.connect(process.env.MONGO_URI, mongoOptions), 5000);
   });
@@ -57,6 +57,11 @@ app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
 
 mongoose.connection.on('error', (err) => {
   console.error("Mongoose connection error:", err);
+  // Exit process if critical connection error occurs
+  if (err.message.includes('ENOTFOUND')) {
+    console.error("Critical error: MongoDB host not found.");
+    process.exit(1);
+  }
   // Try to reconnect after error
   setTimeout(() => mongoose.connect(process.env.MONGO_URI, mongoOptions), 5000);
 });
