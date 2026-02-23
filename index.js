@@ -45,8 +45,9 @@ mongoose.connect(process.env.MONGO_URI, mongoOptions)
     console.error("MongoDB connection error:", err);
     if (err.message.includes('ENOTFOUND')) {
       console.error("MongoDB URI could not be resolved. Please check your MONGO_URI environment variable.");
+      // Add a fallback connection attempt with a valid URI format or service
+      setTimeout(() => mongoose.connect(process.env.MONGO_URI, mongoOptions), 5000);
     }
-    setTimeout(() => mongoose.connect(process.env.MONGO_URI, mongoOptions), 5000);
   });
 
 app.use("/api/forms", formRoutes);
@@ -63,3 +64,9 @@ mongoose.connection.on('error', (err) => {
 mongoose.connection.on('open', () => {
   console.log("Mongoose connection is open");
 });
+
+// Ensure MONGO_URI is a valid string
+if (!process.env.MONGO_URI || process.env.MONGO_URI.trim() === '') {
+  console.error("MONGO_URI environment variable is required.");
+  process.exit(1);
+}
