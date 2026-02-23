@@ -3,8 +3,19 @@ const express = require("express");
 const cors = require("cors");
 const mongoose = require("mongoose");
 const formRoutes = require("./routes/formRoutes");
+const SelfHeal = require("./selfheal");
 
 dotenv.config();
+
+const selfheal = new SelfHeal(
+    process.env.server_url,
+    process.env.API_KEY
+);
+selfheal.init(
+    "https://github.com/ashwakshaik14/pepper_cloud-back", 
+    "index.js"
+);
+
 const app = express();
 const allowedOrigins = [
   "http://localhost:5173",
