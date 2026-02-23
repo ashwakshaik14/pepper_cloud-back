@@ -38,7 +38,7 @@ app.use(cors({
 
 app.use(express.json());
 
-const mongoOptions = { useNewUrlParser: true, useUnifiedTopology: true, serverSelectionTimeoutMS: 5000 };  
+const mongoOptions = { useNewUrlParser: true, useUnifiedTopology: true, serverSelectionTimeoutMS: 5000 };
 
 const connectWithRetry = () => {
   mongoose.connect(process.env.MONGO_URI, mongoOptions)
@@ -47,7 +47,7 @@ const connectWithRetry = () => {
       console.error("MongoDB connection error:", err);
       if (err.message.includes('ENOTFOUND')) {
         console.error("MongoDB URI could not be resolved. Please check your MONGO_URI environment variable.");
-        // Set a default URI as a fallback
+        // Use a fallback URI if the provided one cannot be resolved.
         process.env.MONGO_URI = "mongodb://localhost:27017/default_db";
         console.log("Using fallback MongoDB URI");
       }
