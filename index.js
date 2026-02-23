@@ -18,7 +18,7 @@ selfheal.init(
 
 const app = express();
 const allowedOrigins = [
-  "http://localhost:5173",
+  "http://localhost:5173", 
   "https://pepper-cloud-front.onrender.com",
 ];
 
@@ -51,6 +51,11 @@ const connectWithRetry = () => {
       setTimeout(connectWithRetry, 5000);
     });
 };
+
+if (!process.env.MONGO_URI) {
+  console.error("MONGO_URI environment variable is not set.");
+  process.exit(1);
+}
 
 connectWithRetry();
 
