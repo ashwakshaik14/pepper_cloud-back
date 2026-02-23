@@ -81,3 +81,10 @@ process.on('SIGINT', () => {
     process.exit(0);
   });
 });
+
+mongoose.set('debug', true); // Enable Mongoose debug mode to log queries and errors
+
+mongoose.connection.on('timeout', () => {
+  console.warn('Mongoose connection timeout');
+  connectWithRetry(); // Retry the connection
+});
